@@ -444,6 +444,7 @@ You should call only one job action method in the worker handler. This is a bug 
 			workerIsClosing ||
 			insufficientCapacityAvailable
 		) {
+			this.logger.logDebug(`Skipping poll pollAlreadyInProgress=${pollAlreadyInProgress} workerIsClosing=${workerIsClosing} insufficientCapacityAvailable=${insufficientCapacityAvailable}`)
 			return
 		}
 
@@ -483,6 +484,7 @@ You should call only one job action method in the worker handler. This is a bug 
 				)
 				// Backoff on
 				if (error.code === GrpcError.RESOURCE_EXHAUSTED || error.code === GrpcError.INTERNAL) {
+					this.logger.logDebug(`Stream [${id}] handle error=${error.code} with backoffCount=${this.backPressureRetryCount}`)
 					setTimeout(
 						() => this.handleStreamEnd(id),
 						1000 * 2 ** this.backPressureRetryCount++
